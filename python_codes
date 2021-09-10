@@ -1,0 +1,29 @@
+import geopandas as gpd
+import pandas as pd
+import matplotlib.pyplot as plt
+
+
+land = pd.read_csv("quakes.csv", sep=r'\s*,\s*', header=0, index_col=False, engine='python')
+land = pd.DataFrame(land)
+
+gdf = gpd.GeoDataFrame(land).reset_index()
+kenya = gpd.read_file('County.shp')
+
+merged = kenya.set_index('COUNTY').join(gdf.set_index('COUNTY'), how='right')
+merged = merged.reset_index()
+
+fig, ax = plt.subplots(1, figsize=(10, 8))
+color = 'Reds'
+kenya.plot(ax=ax, color='white', edgecolor='black')
+merged.plot(column='freq', cmap=color, linewidth=0.8, ax=ax, edgecolor='0.8')
+ax.axis('off')
+ax.set_title('Earthquake Distribution', fontdict={'fontsize': '14', 'fontweight' : '2'})
+vmin, vmax = 0, 30
+sm = plt.cm.ScalarMappable(cmap=color, norm=plt.Normalize(vmin=vmin, vmax=vmax))
+sm._A = []
+cbar = fig.colorbar(sm)
+cbar.ax.tick_params(labelsize=20)
+ax.annotate('Source: WWSSSN, 2021',xy=(0.1, .08),
+            xycoords='figure fraction', horizontalalignment='left',
+            verticalalignment='top', fontsize=12, color='#555555')
+plt.show()
