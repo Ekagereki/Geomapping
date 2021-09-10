@@ -3,10 +3,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-land = pd.read_csv("quakes.csv", sep=r'\s*,\s*', header=0, index_col=False, engine='python')
-land = pd.DataFrame(land)
+quakes = pd.read_csv("mapping_earthquake.csv", sep=r'\s*,\s*', header=0, index_col=False, engine='python')
+quakes = pd.DataFrame(quakes)
 
-gdf = gpd.GeoDataFrame(land).reset_index()
+gdf = gpd.GeoDataFrame(quakes).reset_index()
 kenya = gpd.read_file('County.shp')
 
 merged = kenya.set_index('COUNTY').join(gdf.set_index('COUNTY'), how='right')
